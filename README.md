@@ -6,7 +6,8 @@
 	
 	"Legal Input: 't' for true, 'f' for false, '!' for not, '|' for or, '&' for and"
 	
-	"Parens need to be used for proper evaluation, and expressions inside parens will be evaluated first" 
+	"Parens NEED to be used for proper evaluation, for every binary evaluator '|' and '&', there must be a corresponding closing 		parens, expressions in the parens will be evaluated first" 
 	
 	
 	
+	compile: g++ -o bool boolean_evaluator.cpp
