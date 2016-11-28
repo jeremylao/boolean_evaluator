@@ -5,13 +5,7 @@
 #include <stack>
 #include <sstream>
 
-
-//turn infix into post fix evaluation ((t|f)&(f|f))
-
-
 using namespace std;
-
-
 
 bool evaluator(bool left, bool right, char expression){
 	
@@ -48,9 +42,13 @@ int main(){
 	char temp;
 	char final_compare;
 	char initial_num;
+	int not_flag= 0;
+	int expression_length = 0;
+	int x = 1;
 	
 	string input;
 	
+		
 	cout  << "Boolean Evaluator Tool" << endl;
 	cout << "Enter a boolean expression and what you think the answer is" << endl;
 	cout << "The tool will indicate correct or incorrect answer to the expression" << endl;
@@ -64,6 +62,8 @@ int main(){
 	cout << endl;
 	
 	cout << "Enter number of expressions to evaluate: " << endl;
+	
+	
 	
 	int num_loops = 0;
 	
@@ -85,9 +85,13 @@ int main(){
 	
 	getline(cin, input);
 	
+	while(input[x] != ' '){
+		++expression_length;
+		++x;
+	}
+	
 	for(int i = 0; i<input.length(); ++i){
 		temp = input[i];
-		
 		if(temp == '(' or temp == ' '){
 			continue;
 		}
@@ -102,8 +106,10 @@ int main(){
 		}
 		else if(temp == '!'){
 			eval_stack.push('!');
+			++not_flag;
 		}
 		else if(temp == '|' or temp == '&'){
+			
 			if(temp == '|'){
 				eval_stack.push('|');
 			}
@@ -113,35 +119,41 @@ int main(){
 		}
 		else if(temp == ')'){
 			
-			if(eval_stack.top() == '|' or eval_stack.top() == '&'){
-	
+			if(!eval_stack.empty() && (eval_stack.top() == '|' or eval_stack.top() == '&')){
 				left = bool_stack.top();
 				bool_stack.pop();
-	
 				right = bool_stack.top();
 				bool_stack.pop();
-	
 				operation = eval_stack.top();
 				eval_stack.pop();
-	
-				result = evaluator(left,right,operation);
-				
+				result = evaluator(left,right,operation);				
 				bool_stack.push(result);
 				
 				
 				if(!eval_stack.empty() && eval_stack.top() == '!'){
+					--not_flag;
 					result = naughter(bool_stack.top());
-				bool_stack.pop();
-				bool_stack.push(result);
-				eval_stack.pop();
+					bool_stack.pop();
+					bool_stack.push(result);
+					eval_stack.pop();
 				}
 				
 				
-				}
+			}
 			
-			else if(!eval_stack.empty() || eval_stack.top() == '!'){
-			//	cout << eval_stack.top() << endl;
-			//	cout << bool_stack.top() << endl;
+			if(i == expression_length && !eval_stack.empty() && eval_stack.size() > 1 && (not_flag > 0)){
+				left = bool_stack.top();
+				bool_stack.pop();
+				right = bool_stack.top();
+				bool_stack.pop();
+				operation = eval_stack.top();
+				eval_stack.pop();
+				result = evaluator(left,right,operation);				
+				bool_stack.push(result);
+			}
+			
+			else if(!eval_stack.empty() && eval_stack.top() == '!'){
+				--not_flag;
 				result = naughter(bool_stack.top());
 				bool_stack.pop();
 				bool_stack.push(result);
